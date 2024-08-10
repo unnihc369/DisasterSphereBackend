@@ -4,6 +4,7 @@ import {
     getMaterialsByDisaster,
     acceptMaterial,
     deleteMaterial,
+    verifyMaterial,
 } from '../controllers/materialController.js';
 
 const router = express.Router();
@@ -11,6 +12,7 @@ const router = express.Router();
 router.post('/add', addMaterial);
 router.get('/:disasterId', getMaterialsByDisaster);
 router.post('/accept/:materialId', acceptMaterial);
-router.delete('/:materialId', deleteMaterial);
+router.delete('/:id', deleteMaterial);
+router.put('/verify/:id',verifyMaterial)
 
 export default router;

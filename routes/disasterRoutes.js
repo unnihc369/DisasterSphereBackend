@@ -5,7 +5,8 @@ import {
     deleteDisaster,
     getDisaster,
     getAllDisasters,
-    volunteerForDisaster
+    volunteerForDisaster,
+    paymentSuccess
 } from '../controllers/disasterController.js';
 
 const router = express.Router();
@@ -16,5 +17,6 @@ router.delete('/:id', deleteDisaster);
 router.get('/:id', getDisaster);
 router.get('/', getAllDisasters);
 router.post('/vol', volunteerForDisaster);
+router.post('/success',paymentSuccess);
 
 export default router;

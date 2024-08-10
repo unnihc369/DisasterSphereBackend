@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import authRoutes from './routes/authRoutes.js';
 import disasterRoutes from './routes/disasterRoutes.js';
 import materialRoutes from './routes/materialRoutes.js'
+import postRoutes from './routes/postRoutes.js'
+
 
 dotenv.config()
 const app = express();
@@ -13,12 +15,14 @@ app.use(cors());
 
 
 app.get('/', (req, res) => {
-    res.status(201).json("Home GET ");
+    res.status(201).json("Server Running");
 });
 
 app.use('/user', authRoutes);
 app.use('/dis',disasterRoutes);
 app.use('/mat',materialRoutes);
+app.use('/posts', postRoutes);
+
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {

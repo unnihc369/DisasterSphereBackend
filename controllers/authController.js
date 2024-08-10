@@ -18,7 +18,76 @@ export const register = async (req, res) => {
         await sendEmail({
             email: user.email,
             subject: 'Verify your email',
-            message: `<a href="${url}">Verify Email</a>`,
+            message: `<!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            background-color: #f8f9fa;
+                            color: #333;
+                            margin: 0;
+                            padding: 0;
+                        }
+                        .container {
+                            max-width: 600px;
+                            margin: 0 auto;
+                            padding: 20px;
+                            background-color: #ffffff;
+                            border: 1px solid #dddddd;
+                            border-radius: 8px;
+                        }
+                        .header {
+                            text-align: center;
+                            margin-bottom: 20px;
+                        }
+                        .header img {
+                            width: 100px;
+                            height: auto;
+                        }
+                        .content {
+                            margin-bottom: 20px;
+                        }
+                        .content h2 {
+                            color: #007bff;
+                        }
+                        .button {
+                            display: block;
+                            width: 100%;
+                            max-width: 200px;
+                            margin: 20px auto;
+                            padding: 10px;
+                            text-align: center;
+                            color: #ffffff;
+                            background-color: #007bff;
+                            border-radius: 5px;
+                            text-decoration: none;
+                            font-weight: bold;
+                        }
+                        .footer {
+                            text-align: center;
+                            font-size: 0.8em;
+                            color: #666;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="content">
+                            <h2>Verify Your Email Address</h2>
+                            <p>Thank you for signing up! To complete your registration, please verify your email address by clicking the button below:</p>
+                            <a href="${url}" class="button">Verify Email</a>
+                            <p>If you did not create an account, please ignore this email.</p>
+                        </div>
+                        <div class="footer">
+                            <p>&copy; ${new Date().getFullYear()} DisasterSphere. All rights reserved.</p>
+                            <p>If you have any questions, please contact our support team.</p>
+                        </div>
+                    </div>
+                </body>
+                </html>`,
         });
 
         res.status(201).json({ message: 'User registered. Please check your email to verify your account.' });

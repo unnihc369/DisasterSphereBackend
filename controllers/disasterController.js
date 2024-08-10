@@ -2,7 +2,7 @@ import Disaster from '../models/Disaster.js';
 import Users from '../models/Users.js';
 
 export const addDisaster = async (req, res) => {
-    const { name, state, city, disc, Place,userId  } = req.body; 
+    const { name, state, city, disc, Place,userId,isVerified  } = req.body; 
 
     try {
         const newDisaster = new Disaster({
@@ -11,7 +11,8 @@ export const addDisaster = async (req, res) => {
             city,
             disc,
             Place,
-            userId
+            userId,
+            isVerified
         });
 
         const savedDisaster = await newDisaster.save();
@@ -111,3 +112,19 @@ export const volunteerForDisaster = async (req, res) => {
     }
 };
 
+export const paymentSuccess = async (req, res) => {
+    const { disasterId } = req.body;
+
+    try {
+        const disaster = await Disaster.findById(disasterId);
+        if (!disaster) return res.status(404).send('Disaster not found');
+
+        disaster.amount += 850;
+        await disaster.save();
+
+        res.status(200).send('Amount updated successfully');
+    } catch (error) {
+        console.error('Failed to update amount:', error);
+        res.status(500).send('Error updating amount');
+    }
+}

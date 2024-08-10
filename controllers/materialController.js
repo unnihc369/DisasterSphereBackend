@@ -3,7 +3,7 @@ import Disaster from '../models/Disaster.js';
 import Users from '../models/Users.js';
 
 export const addMaterial = async (req, res) => {
-    const { disasterId, itemName, quantityNeeded } = req.body;
+    const { disasterId, itemName, quantityNeeded,isVerified } = req.body;
 
     try {
         const disaster = await Disaster.findById(disasterId);
@@ -15,6 +15,7 @@ export const addMaterial = async (req, res) => {
             disasterId,
             itemName,
             quantityNeeded,
+            isVerified
         });
 
         await material.save();
@@ -60,19 +61,38 @@ export const acceptMaterial = async (req, res) => {
 };
 
 export const deleteMaterial = async (req, res) => {
-    const { materialId } = req.params;
+    const { id } = req.params;
 
     try {
-        const material = await Material.findById(materialId);
-        if (!material) {
+        const deletedMaterial = await Material.findByIdAndDelete(id);
+
+        if (!deleteMaterial) {
             return res.status(404).json({ error: 'Material not found' });
         }
 
-        await material.remove();
-
-        res.status(200).json({ message: 'Material deleted successfully' });
+        res.json({ message: 'Material deleted successfully' });
     } catch (error) {
-        console.error('Error deleting material:', error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(400).json({ error: 'Failed to Material disaster' });
+    }
+};
+
+export const verifyMaterial = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const material = await Material.findById(id);
+
+        if (!material) {
+            return res.status(404).json({ message: 'Material not found' });
+        }
+
+        material.isVerified = true;
+
+        await material.save();
+
+        return res.status(200).json({ message: 'Material verified successfully', material });
+    } catch (error) {
+        console.error('Failed to verify material:', error);
+        return res.status(500).json({ message: 'Internal server error' });
     }
 };
