@@ -173,27 +173,115 @@ export const updateUser = async (req, res) => {
     }
 };
 
-export const sendAlertsToUsers = async (req, res) => {
-    const { state, city, subject, message } = req.body;
+const generateEmailTemplate = (message, alertType,state,city) => {
+    let alertColor;
+    switch (alertType) {
+        case 'red':
+            alertColor = '#dc3545';
+            break;
+        case 'orange':
+            alertColor = '#fd7e14';
+            break;
+        case 'yellow':
+            alertColor = '#ffc107';
+            break;
+        default:
+            alertColor = '#007bff'; 
+    }
 
-    if (!state || !city || !subject || !message) {
-        return res.status(400).json({ error: 'State, city, subject, and message are required.' });
+    return `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f8f9fa;
+                    color: #333;
+                    margin: 0;
+                    padding: 0;
+                }
+                .container {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    background-color: #ffffff;
+                    border: 1px solid #dddddd;
+                    border-radius: 8px;
+                }
+                .header {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+                .header img {
+                    width: 100px;
+                    height: auto;
+                }
+                .alert-header {
+                    color: ${alertColor};
+                }
+                .content {
+                    margin-bottom: 20px;
+                }
+                .button {
+                    display: block;
+                    width: 100%;
+                    max-width: 200px;
+                    margin: 20px auto;
+                    padding: 10px;
+                    text-align: center;
+                    color: #ffffff;
+                    background-color: ${alertColor};
+                    border-radius: 5px;
+                    text-decoration: none;
+                    font-weight: bold;
+                }
+                .footer {
+                    text-align: center;
+                    font-size: 0.8em;
+                    color: #666;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="content">
+                    <h2 class="alert-header">Disaster Alert - ${alertType.charAt(0).toUpperCase() + alertType.slice(1)} Level</h2>
+                    <h4>${city}-${state}</h4>
+                    <p>${message}</p>
+                    <p>Please take necessary precautions and stay safe.</p>
+                </div>
+                <div class="footer">
+                    <p>&copy; ${new Date().getFullYear()} DisasterSphere. All rights reserved.</p>
+                    <p>If you have any questions, please contact our support team.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+    `;
+};
+
+export const sendAlertsToUsers = async (req, res) => {
+    const { state, city, subject, message, alertType } = req.body;
+
+    if (!state || !city || !subject || !message || !alertType) {
+        return res.status(400).json({ error: 'State, city, subject, message, and alertType are required.' });
     }
 
     try {
-        // Fetch users based on state and city
         const users = await User.find({ state, city });
 
         if (users.length === 0) {
             return res.status(404).json({ message: 'No users found for the specified state and city.' });
         }
 
-        // Send email to each user
         for (const user of users) {
             await sendEmail({
                 email: user.email,
                 subject,
-                message,
+                message: generateEmailTemplate(message, alertType,state,city),  // Use the updated email template function
             });
         }
 
