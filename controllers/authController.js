@@ -281,7 +281,7 @@ export const sendAlertsToUsers = async (req, res) => {
             await sendEmail({
                 email: user.email,
                 subject,
-                message: generateEmailTemplate(message, alertType,state,city),  // Use the updated email template function
+                message: generateEmailTemplate(message, alertType,state,city),  
             });
         }
 
