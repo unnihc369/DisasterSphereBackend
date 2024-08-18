@@ -7,7 +7,8 @@ const postSchema = new mongoose.Schema({
     priority: { type: Number, required: true, enum: [1, 2] }, 
     disasterId: { type: mongoose.Schema.Types.ObjectId, ref: 'Disaster', required: true },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    username:{type:String,required:true}
+    username:{type:String,required:true},
+    locationLink: { type: String ,default:""},
 }, { timestamps: true });
 
 const Post = mongoose.model('Post', postSchema);

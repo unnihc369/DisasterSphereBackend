@@ -2,7 +2,7 @@ import Post from "../models/Posts.js";
 
 export const createPost = async (req, res) => {
     try {
-        const { title, disc, imageUrl, priority, disasterId, userId,username } = req.body;
+        const { title, disc, imageUrl, priority, disasterId, userId, username, locationLink } = req.body;
 
         const newPost = new Post({
             title,
@@ -11,7 +11,8 @@ export const createPost = async (req, res) => {
             priority,
             disasterId,
             userId,
-            username
+            username,
+            locationLink  
         });
 
         await newPost.save();
@@ -20,6 +21,7 @@ export const createPost = async (req, res) => {
         res.status(500).json({ message: 'Error creating post', error: error.message });
     }
 };
+
 
 export const deletePost = async (req, res) => {
     const { id } = req.params;

@@ -5,10 +5,11 @@ import {
     login,
     forgotPassword,
     resetPassword,
-    verifyToken,
     getUsers,
     updateUser,
     sendAlertsToUsers,
+    deleteUser,
+    getUser,
 } from '../controllers/authController.js';
 import protect from '../middlewares/authMiddleware.js';
 
@@ -20,8 +21,9 @@ router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 router.get('/users', getUsers)
+router.get('/:id', getUser)
 router.post('/alert', sendAlertsToUsers);
 router.put('/:id', updateUser);
-router.get('/verify-token', verifyToken);
+router.delete('/:id', deleteUser);
 
 export default router;

@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/Users.js';
+import Post from '../models/Posts.js';
 import sendEmail from '../utils/sendEmail.js';
 
 const generateToken = (id) => {
@@ -350,18 +351,39 @@ export const getUsers = async (req, res) => {
     }
 };
 
-export const verifyToken = async (req, res) => {
-    const token = req.header('Authorization').replace('Bearer ', '');
-
-    if (!token) {
-        return res.status(401).json({ message: 'No token provided' });
-    }
+export const getUser = async (req, res) => {
+    const { id } = req.params;
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        res.status(200).json({ message: 'Token is valid' });
+        const user = await User.findById(id);
+        res.status(200).json(user);
     } catch (err) {
-        res.status(401).json({ message: 'Token is not valid' });
+        res.status(400).json({ error: err.message });
+    }
+};
+
+export const deleteUser = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const user = await User.findById(id);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        await Post.deleteMany({ userId: id });
+        await user.deleteOne();
+
+        res.status(200).json({
+            message: 'User deleted successfully',
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                isAdmin: user.isAdmin,
+            },
+        });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error', error: err.message });
     }
 };

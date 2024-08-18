@@ -50,6 +50,12 @@ export const deleteDisaster = async (req, res) => {
     const { id } = req.params;
 
     try {
+
+        await User.updateMany(
+            { volunteeredDisasters: id },
+            { $pull: { volunteeredDisasters: id } }
+        );
+        
         const deletedDisaster = await Disaster.findByIdAndDelete(id);
 
         if (!deletedDisaster) {
