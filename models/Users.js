@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema({
     isVerified: { type: Boolean, default: false },
     isAdmin: { type: Boolean, default: false },
     profileImage: { type: String, default: '' },
-    volunteeredDisasters: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Disaster' }],
+    volunteeredDisasters: [],
 }, { timestamps: true });
 
 UserSchema.pre('save', async function (next) {
@@ -22,7 +22,6 @@ UserSchema.pre('save', async function (next) {
     next();
 });
 
-// Method to match the entered password with the hashed password
 UserSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
