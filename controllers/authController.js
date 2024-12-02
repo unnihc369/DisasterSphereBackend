@@ -272,24 +272,29 @@ export const sendAlertsToUsers = async (req, res) => {
     }
 
     try {
-        const users = await User.find({ state, city });
+        // Use indexed fields for efficient user lookup
+        const users = await User.find({ state, city }, 'email'); // Fetch only emails for efficiency
 
-        if (users.length === 0) {
+        if (!users.length) {
             return res.status(404).json({ message: 'No users found for the specified state and city.' });
         }
 
-        for (const user of users) {
-            await sendEmail({
+        // Prepare email tasks for parallel execution
+        const emailTasks = users.map(user =>
+            sendEmail({
                 email: user.email,
                 subject,
-                message: generateEmailTemplate(message, alertType,state,city),  
-            });
-        }
+                message: generateEmailTemplate(message, alertType, state, city),
+            })
+        );
 
-        return res.status(200).json({ message: 'Alerts sent successfully to users.' });
+        // Execute all email tasks in parallel
+        await Promise.all(emailTasks);
+
+        res.status(200).json({ message: 'Alerts sent successfully to users.' });
     } catch (error) {
         console.error('Error sending alerts:', error);
-        return res.status(500).json({ error: 'Failed to send alerts.' });
+        res.status(500).json({ error: 'Failed to send alerts.' });
     }
 };
 
